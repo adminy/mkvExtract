@@ -1,0 +1,1 @@
+# mkvExtract is this idea of being able to extract all the files from an mkv with as much information on the files by using node.js mkvinfo and mkvextract, also this will make mkvinfo data into json format. Mkv Extract using javascript's node.js 
