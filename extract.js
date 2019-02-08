@@ -7,9 +7,11 @@ if(process.argv.length !== 3) {
 	console.log("Usage: node extract file.mkv")
 	process.exit()
 }
+let escape = (str) => str.replace(/\\/g, "\\\\").replace(/\$/g, "\\$").replace(/'/g, "\\'").replace(/"/g, "\\\"")
+										   .replace(/\(/g, "\\\(").replace(/\)/g, "\\\)").replace(/ /g, "\\ ")
 
-exec("mkvinfo " + process.argv[2], function(error, stdout, stderr){  
 
+exec("mkvinfo " + escape(process.cwd() + '/' + process.argv[2]), function(error, stdout, stderr){  
 let lines = stdout.split("\n")
 	let processingTrack = 0, // 0 - initial state, 1 - found track header, 2 - processing
 	track = {}
@@ -95,15 +97,17 @@ let lines = stdout.split("\n")
 	// console.log(tracks)
 
 	//Finished getting tracks information, now onto extracting the necessary ones
-	let saveFolder = process.argv[2].split(".mkv")[0]
-	if (!fs.existsSync(__dirname + "/" + saveFolder))
-		fs.mkdirSync(__dirname + "/" + saveFolder, 0777)
+	let saveFolder = process.argv[2].split(".mkv")[0],
+		saveFolderPath = escape(process.cwd() + "/" + saveFolder)
+		saveFolderPathUnescaped = process.cwd() + "/" + saveFolder
+	if (!fs.existsSync(saveFolderPathUnescaped))
+		fs.mkdirSync(saveFolderPathUnescaped, 0777)
 
-	let extract_tracks_cmd = "mkvextract tracks " + process.argv[2] + " "
+	let extract_tracks_cmd = "mkvextract tracks " + escape(process.cwd() + '/' + process.argv[2]) + " "
 
 	for(let i = 0; i < tracks.length; i++) {
 		let track = tracks[i],
-			track_str = track.id + ":" + saveFolder + "/" + track.type + track.id + "_"
+			track_str = track.id + ":" + saveFolderPath + "/" + track.type + track.id + "_"
 
 		if(track.language)
 			track_str += track.language + "_"
@@ -141,16 +145,15 @@ let lines = stdout.split("\n")
 		//append track to command & continue
 		extract_tracks_cmd += track_str + " "
 	}
-	extract_tracks_cmd = extract_tracks_cmd.replace(/\\/g, "\\\\").replace(/\$/g, "\\$").replace(/'/g, "\\'").replace(/"/g, "\\\"")
-										   .replace(/\(/g, "\\\(").replace(/\)/g, "\\\)")
+	extract_tracks_cmd = extract_tracks_cmd
 
 	// console.log(extract_tracks_cmd)
 	exec(extract_tracks_cmd, function(error, stdout, stderr) {  
 		console.log("Extracted!")
 
-		var files = fs.readdirSync(__dirname + "/" + saveFolder).filter(fn => fn.endsWith('.ass'))
+		var files = fs.readdirSync(saveFolderPathUnescaped).filter(fn => fn.endsWith('.ass'))
 		files.forEach(function(file) {
-			let filePath = __dirname + "/" + saveFolder + "/" + file
+			let filePath = process.cwd() + "/" + saveFolder + "/" + file
 
 			fs.readFile(filePath, 'utf8', function(err, script) {
 				for(let i = 0; i < languages.length; i++)
