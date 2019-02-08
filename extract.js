@@ -108,7 +108,7 @@ let lines = stdout.split("\n")
 		if(track.language)
 			track_str += track.language + "_"
 
-		else if(!track.language && !track.type == "video")
+		else if(!track.language && track.type !== "video")
 			track_str += "und_"	//for the bonus :)
 
 
@@ -154,11 +154,10 @@ let lines = stdout.split("\n")
 
 			fs.readFile(filePath, 'utf8', function(err, script) {
 				for(let i = 0; i < languages.length; i++)
-					if(script.indexOf(languages[i][1]) !== -1)
+					if(script.indexOf(languages[i][1]) !== -1) {
 						exec("mv " + filePath + " " + filePath.replace("_und_", "_"+languages[i][0]+"_"))
-						// fs.rename(filePath, filePath.replace("_und_", "_"+languages[i][0]+"_"), function(err) {
-						// 	if ( err ) console.log("Could not rename file because: " + err);
-						// })
+						break; //Not the best of choices ... but No NN's for language credibility ...
+					}
 			})
 			
 		})
