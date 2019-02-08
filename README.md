@@ -1,1 +1,6 @@
-# mkvExtract is this idea of being able to extract all the files from an mkv with as much information on the files by using node.js mkvinfo and mkvextract, also this will make mkvinfo data into json format. Mkv Extract using javascript's node.js 
+### mkvExtract uses mkvextract and mkvinfo to extract all\* tracks from an mkv.
+ - It's able to convert ugly mkvinfo text into formatted json tracks
+ - Extracts all important files from mkv
+ - Attempts to guess the language of the track!
+
+Usage: node extract.js file.mkv  
