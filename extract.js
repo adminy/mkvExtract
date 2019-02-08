@@ -59,7 +59,7 @@ let lines = stdout.split("\n")
 			else if( data_info.indexOf("Name:") !== -1 )
 				track.name = data_info.substring(6).split()[0]
 
-			else if( data_info.indexOf("Language:") !== -1 && track.type !== "video" )
+			else if( data_info.indexOf("Language:") !== -1 && track.type !== "video" && data_info.substring(10).split()[0] != "und" )
 				 track.language = data_info.substring(10).split()[0]
 			
 			//bonus, if track name mentions language in it ...
